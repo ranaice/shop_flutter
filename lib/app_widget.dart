@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:shop_with_provider/view/screens/products_overview_screen.dart';
+import './view/screens/products_overview_screen.dart';
 
 class AppWidget extends StatelessWidget {
   @override
@@ -8,7 +7,9 @@ class AppWidget extends StatelessWidget {
     return MaterialApp(
       title: 'Minha Loja',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
+        accentColor: Colors.deepOrange,
+        fontFamily: 'Lato',
       ),
       home: ProductOverviewScreen(),
     );

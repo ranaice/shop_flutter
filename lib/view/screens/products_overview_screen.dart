@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop_with_provider/mock/dummy_data.dart';
-import 'package:shop_with_provider/models/product.dart';
-import 'package:shop_with_provider/view/widgets/product_item.dart';
+import 'package:shop_flutter/view/widgets/product_item.dart';
+import '../../mock/dummy_data.dart';
+import '../../models/product.dart';
 
 class ProductOverviewScreen extends StatelessWidget {
   final List<Product> loadedProducts = DUMMY_PRODUCTS;
