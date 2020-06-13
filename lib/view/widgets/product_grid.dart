@@ -22,8 +22,9 @@ class ProductGrid extends StatelessWidget {
         ),
         itemCount: loadedProducts.length,
         itemBuilder: (_, index) {
-          return ProductItem(
-            product: loadedProducts[index],
+          return ChangeNotifierProvider.value(
+            value: loadedProducts[index],
+            child: ProductItem(),
           );
         });
   }
