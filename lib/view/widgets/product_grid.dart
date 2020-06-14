@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:shop_flutter/providers/products_provider.dart';
 import 'package:shop_flutter/view/widgets/product_item.dart';
 
 class ProductGrid extends StatelessWidget {
-  const ProductGrid({
+  final bool showFavoriteOnly;
+
+  ProductGrid({
     Key key,
+    this.showFavoriteOnly,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final loadedProducts = Provider.of<ProductsProvider>(context).products;
+    final provider = Provider.of<ProductsProvider>(context);
+    final loadedProducts = showFavoriteOnly ? provider.favoriteProducts : provider.products;
 
     return GridView.builder(
         padding: EdgeInsets.all(10.0),

@@ -7,6 +7,10 @@ class ProductsProvider with ChangeNotifier {
 
   List<Product> get products => [..._products];
 
+  List<Product> get favoriteProducts {
+    return _products.where((element) => element.isFavorite).toList();
+  }
+
   void addProduct(Product product) {
     _products.add(product);
     notifyListeners();
@@ -16,4 +20,15 @@ class ProductsProvider with ChangeNotifier {
     _products.removeWhere((element) => element.id == id);
     notifyListeners();
   }
+  // bool _showFavoriteOnly = false;
+
+  // void showFavoriteOnly() {
+  //   _showFavoriteOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showFavoriteAll() {
+  //   _showFavoriteOnly = false;
+  //   notifyListeners();
+  // }
 }
