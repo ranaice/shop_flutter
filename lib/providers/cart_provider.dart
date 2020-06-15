@@ -27,6 +27,7 @@ class CartProvider with ChangeNotifier {
         product.id,
         (existingProduct) => CartItem(
           id: existingProduct.id,
+          productId: product.id,
           title: existingProduct.title,
           quantity: existingProduct.quantity + 1,
           price: existingProduct.price,
@@ -35,10 +36,21 @@ class CartProvider with ChangeNotifier {
     } else {
       _items.putIfAbsent(
         product.id,
-        () => CartItem(id: Random().nextDouble().toString(), title: product.title, quantity: 1, price: product.price),
+        () => CartItem(
+          id: Random().nextDouble().toString(),
+          productId: product.id,
+          title: product.title,
+          quantity: 1,
+          price: product.price,
+        ),
       );
     }
 
+    notifyListeners();
+  }
+
+  void removeItem(String productId) {
+    _items.remove(productId);
     notifyListeners();
   }
 }
