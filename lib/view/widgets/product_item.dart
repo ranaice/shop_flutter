@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_flutter/models/product.dart';
+import 'package:shop_flutter/providers/products_provider.dart';
 import 'package:shop_flutter/utils/routes.dart';
 
 class ProductItem extends StatelessWidget {
@@ -28,7 +30,9 @@ class ProductItem extends StatelessWidget {
                 Icons.delete,
                 color: Theme.of(context).errorColor,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Provider.of<ProductsProvider>(context, listen: false).removeProduct(product.id);
+              },
             ),
           ],
         ),
