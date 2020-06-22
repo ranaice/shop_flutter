@@ -27,6 +27,22 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_formData.isEmpty) {
+      final product = ModalRoute.of(context).settings.arguments as Product;
+      _formData['id'] = product.id;
+      _formData['title'] = product.title;
+      _formData['price'] = product.price;
+      _formData['description'] = product.description;
+      _formData['imageUrl'] = product.imageUrl;
+
+      _imageUrlController.text = _formData['imageUrl'];
+    }
+  }
+
+  @override
   void dispose() {
     _priceFocus.dispose();
     _descriptionFocus.dispose();
@@ -58,6 +74,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Título'),
                   textInputAction: TextInputAction.next,
+                  initialValue: _formData['title'],
                   onFieldSubmitted: (_) {
                     FocusScope.of(context).requestFocus(_priceFocus);
                   },
@@ -71,6 +88,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   onSaved: (value) => _formData['title'] = value,
                 ),
                 TextFormField(
+                  initialValue: _formData['price'].toString(),
                   decoration: InputDecoration(labelText: 'Preço'),
                   textInputAction: TextInputAction.next,
                   focusNode: _priceFocus,
@@ -91,6 +109,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 TextFormField(
                   decoration: InputDecoration(labelText: 'Descrição'),
                   maxLines: 3,
+                  initialValue: _formData['description'],
                   focusNode: _descriptionFocus,
                   keyboardType: TextInputType.multiline,
                   onSaved: (value) => _formData['description'] = value,
@@ -158,13 +177,19 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       final newProduct = Product(
+        id: _formData['id'],
         title: _formData['title'],
         description: _formData['description'],
         price: _formData['price'],
         imageUrl: _formData['imageUrl'],
       );
 
-      Provider.of<ProductsProvider>(context, listen: false).addProduct(newProduct);
+      final provider = Provider.of<ProductsProvider>(context, listen: false);
+      if (_formData['id'] == null) {
+        provider.addProduct(newProduct);
+      } else {
+        provider.updateProduct(newProduct);
+      }
       Navigator.of(context).pop();
     }
   }

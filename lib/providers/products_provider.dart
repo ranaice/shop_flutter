@@ -28,6 +28,19 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateProduct(Product product) {
+    if (product == null || product.id == null) {
+      return;
+    }
+
+    final index = _products.indexWhere((prod) => prod.id == product.id);
+
+    if (index >= 0) {
+      _products[index] = product;
+      notifyListeners();
+    }
+  }
+
   void removeProduct(String id) {
     _products.removeWhere((element) => element.id == id);
     notifyListeners();
