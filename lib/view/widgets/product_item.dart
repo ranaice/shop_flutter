@@ -33,10 +33,9 @@ class ProductItem extends StatelessWidget {
               onPressed: () {
                 showDialog<void>(
                   context: context,
-                  barrierDismissible: true,
                   builder: (BuildContext dialogContext) {
                     return AlertDialog(
-                      title: Text('Excluir Item'),
+                      title: Text('Excluir Produto'),
                       content: Text('Deseja realmente excluir o item "${product.title}"'),
                       actions: <Widget>[
                         FlatButton(
