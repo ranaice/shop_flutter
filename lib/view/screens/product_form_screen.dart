@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_flutter/models/product.dart';
+import 'package:shop_flutter/providers/products_provider.dart';
 
 class ProductFormScreen extends StatefulWidget {
   ProductFormScreen({Key key}) : super(key: key);
@@ -137,6 +139,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                       child: _imageUrlController.text.isEmpty
                           ? Text('Informa a URL')
                           : FittedBox(
+                              fit: BoxFit.cover,
                               child: Image.network(
                                 _imageUrlController.text,
                                 fit: BoxFit.cover,
@@ -155,12 +158,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       final newProduct = Product(
-        id: Random().nextDouble().toString(),
         title: _formData['title'],
         description: _formData['description'],
         price: _formData['price'],
         imageUrl: _formData['imageUrl'],
       );
+
+      Provider.of<ProductsProvider>(context, listen: false).addProduct(newProduct);
+      Navigator.of(context).pop();
     }
   }
 
