@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop_flutter/mock/dummy_data.dart';
 import 'package:shop_flutter/models/product.dart';
 
 class ProductsProvider with ChangeNotifier {
-  List<Product> _products = DUMMY_PRODUCTS;
+  // .json é uma regra do realtime db do firebase
+  final String _url = 'https://shop-coder.firebaseio.com/products.json';
+  List<Product> _products = [];
 
   List<Product> get products => [..._products];
 
@@ -17,11 +17,30 @@ class ProductsProvider with ChangeNotifier {
     return _products.where((element) => element.isFavorite).toList();
   }
 
-  Future addProduct(Product newProduct) async {
-    // .json é uma regra do realtime db do firebase
-    const url = 'https://shop-coder.firebaseio.com/products';
+  Future<void> loadProducts() async {
+    final response = await http.get(_url);
+    Map<String, dynamic> data = jsonDecode(response.body);
+    _products.clear();
+    if (data != null) {
+      data.forEach((productId, productData) {
+        _products.add(
+          Product(
+            id: productId,
+            title: productData['title'],
+            description: productData['description'],
+            price: productData['price'],
+            imageUrl: productData['imageUrl'],
+            isFavorite: productData['isFavorite'],
+          ),
+        );
+      });
+    }
 
-    final response = await http.post(url, body: newProduct.toJson());
+    notifyListeners();
+  }
+
+  Future addProduct(Product newProduct) async {
+    final response = await http.post(_url, body: newProduct.toJson());
 
     _products.add(
       Product(
