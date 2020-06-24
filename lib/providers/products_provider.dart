@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop_flutter/mock/dummy_data.dart';
 import 'package:shop_flutter/models/product.dart';
 
@@ -15,10 +17,15 @@ class ProductsProvider with ChangeNotifier {
     return _products.where((element) => element.isFavorite).toList();
   }
 
-  void addProduct(Product newProduct) {
+  Future addProduct(Product newProduct) async {
+    // .json é uma regra do realtime db do firebase
+    const url = 'https://shop-coder.firebaseio.com/products';
+
+    final response = await http.post(url, body: newProduct.toJson());
+
     _products.add(
       Product(
-        id: Random().nextDouble().toString(),
+        id: jsonDecode(response.body)['name'],
         title: newProduct.title,
         description: newProduct.description,
         price: newProduct.price,

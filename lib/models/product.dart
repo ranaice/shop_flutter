@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 class Product with ChangeNotifier {
@@ -21,4 +23,30 @@ class Product with ChangeNotifier {
     isFavorite = !isFavorite;
     notifyListeners();
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'description': description,
+      'price': price,
+      'imageUrl': imageUrl,
+      'isFavorite': isFavorite,
+    };
+  }
+
+  static Product fromMap(Map<String, dynamic> map) {
+    if (map == null) return null;
+
+    return Product(
+      title: map['title'],
+      description: map['description'],
+      price: double.parse(map['price']),
+      imageUrl: map['imageUrl'],
+      isFavorite: map['isFavorite'],
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  static Product fromJson(String source) => fromMap(json.decode(source));
 }

@@ -19,6 +19,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   final _imageUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -69,115 +70,114 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           )
         ],
       ),
-      body: Container(
-        child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.all(15.0),
-              children: <Widget>[
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Título'),
-                  textInputAction: TextInputAction.next,
-                  initialValue: _formData['title'],
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_priceFocus);
-                  },
-                  validator: (value) {
-                    if (value.trim().isEmpty) {
-                      return 'Informe um título válido!';
-                    }
-
-                    return null;
-                  },
-                  onSaved: (value) => _formData['title'] = value,
-                ),
-                TextFormField(
-                  initialValue: _formData['price'].toString(),
-                  decoration: InputDecoration(labelText: 'Preço'),
-                  textInputAction: TextInputAction.next,
-                  focusNode: _priceFocus,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  onFieldSubmitted: (_) {
-                    FocusScope.of(context).requestFocus(_descriptionFocus);
-                  },
-                  validator: (value) {
-                    var price = double.tryParse(value);
-                    if (value.trim().isEmpty || price == null || price <= 0) {
-                      return 'Informe preço válido!';
-                    }
-
-                    return null;
-                  },
-                  onSaved: (value) => _formData['price'] = double.parse(value),
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Descrição'),
-                  maxLines: 3,
-                  initialValue: _formData['description'],
-                  focusNode: _descriptionFocus,
-                  keyboardType: TextInputType.multiline,
-                  onSaved: (value) => _formData['description'] = value,
-                  validator: (value) {
-                    if (value.trim().isEmpty) {
-                      return 'Informe um título válido!';
-                    }
-
-                    return null;
-                  },
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(
-                      child: TextFormField(
-                        controller: _imageUrlController,
-                        focusNode: _imgUrlFocus,
-                        decoration: InputDecoration(labelText: 'URL da Imagem'),
-                        keyboardType: TextInputType.url,
-                        textInputAction: TextInputAction.done,
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Container(
+              child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(15.0),
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(labelText: 'Título'),
+                        textInputAction: TextInputAction.next,
+                        initialValue: _formData['title'],
                         onFieldSubmitted: (_) {
-                          _saveForm();
+                          FocusScope.of(context).requestFocus(_priceFocus);
                         },
                         validator: (value) {
-                          if (value.trim().isEmpty || !_isValidImageUrl(value)) {
-                            return 'Informe uma URL Válida!';
+                          if (value.trim().isEmpty) {
+                            return 'Informe um título válido!';
                           }
 
                           return null;
                         },
-                        onSaved: (value) => _formData['imageUrl'] = value,
+                        onSaved: (value) => _formData['title'] = value,
                       ),
-                    ),
-                    Container(
-                      height: 100,
-                      width: 100,
-                      margin: EdgeInsets.only(top: 8, left: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
+                      TextFormField(
+                        initialValue: _formData['price'].toString(),
+                        decoration: InputDecoration(labelText: 'Preço'),
+                        textInputAction: TextInputAction.next,
+                        focusNode: _priceFocus,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        onFieldSubmitted: (_) {
+                          FocusScope.of(context).requestFocus(_descriptionFocus);
+                        },
+                        validator: (value) {
+                          var price = double.tryParse(value);
+                          if (value.trim().isEmpty || price == null || price <= 0) {
+                            return 'Informe preço válido!';
+                          }
+
+                          return null;
+                        },
+                        onSaved: (value) => _formData['price'] = double.parse(value),
                       ),
-                      alignment: Alignment.center,
-                      child: _imageUrlController.text.isEmpty
-                          ? Text('Informa a URL')
-                          : FittedBox(
-                              fit: BoxFit.cover,
-                              child: Image.network(
-                                _imageUrlController.text,
-                                fit: BoxFit.cover,
+                      TextFormField(
+                        decoration: InputDecoration(labelText: 'Descrição'),
+                        maxLines: 3,
+                        initialValue: _formData['description'],
+                        focusNode: _descriptionFocus,
+                        keyboardType: TextInputType.multiline,
+                        onSaved: (value) => _formData['description'] = value,
+                        validator: (value) {
+                          if (value.trim().isEmpty) {
+                            return 'Informe um título válido!';
+                          }
+
+                          return null;
+                        },
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              controller: _imageUrlController,
+                              focusNode: _imgUrlFocus,
+                              decoration: InputDecoration(labelText: 'URL da Imagem'),
+                              keyboardType: TextInputType.url,
+                              textInputAction: TextInputAction.done,
+                              onFieldSubmitted: (_) {
+                                _saveForm();
+                              },
+                              validator: (value) {
+                                if (value.trim().isEmpty || !_isValidImageUrl(value)) {
+                                  return 'Informe uma URL Válida!';
+                                }
+
+                                return null;
+                              },
+                              onSaved: (value) => _formData['imageUrl'] = value,
+                            ),
+                          ),
+                          Container(
+                            height: 100,
+                            width: 100,
+                            margin: EdgeInsets.only(top: 8, left: 10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1,
                               ),
                             ),
-                    ),
-                  ],
-                )
-              ],
-            )),
-      ),
+                            alignment: Alignment.center,
+                            child: _imageUrlController.text.isEmpty
+                                ? Text('Informa a URL')
+                                : Image.network(
+                                    _imageUrlController.text,
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                        ],
+                      )
+                    ],
+                  )),
+            ),
     );
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       final newProduct = Product(
@@ -188,13 +188,40 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         imageUrl: _formData['imageUrl'],
       );
 
+      setState(() {
+        isLoading = true;
+      });
+
       final provider = Provider.of<ProductsProvider>(context, listen: false);
-      if (_formData['id'] == null) {
-        provider.addProduct(newProduct);
-      } else {
-        provider.updateProduct(newProduct);
+      try {
+        if (_formData['id'] == null) {
+          await provider.addProduct(newProduct);
+        } else {
+          provider.updateProduct(newProduct);
+        }
+      } catch (error) {
+        await showDialog<void>(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: Text('Ocorreu um erro'),
+              content: Text('Ocorreu um erro ao salvar produto'),
+              actions: <Widget>[
+                FlatButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(); //Dismiss dialog
+                    }),
+              ],
+            );
+          },
+        );
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop();
       }
-      Navigator.of(context).pop();
     }
   }
 
