@@ -21,15 +21,22 @@ class ProductsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.all(8),
-        itemCount: productsProvider.itemCount,
-        itemBuilder: (_, int index) {
-          return ProductItem(product: productsProvider.products[index]);
-        },
-        separatorBuilder: (_, __) => Divider(),
+      body: RefreshIndicator(
+        onRefresh: () => _refreshProducts(context),
+        child: ListView.separated(
+          padding: EdgeInsets.all(8),
+          itemCount: productsProvider.itemCount,
+          itemBuilder: (_, int index) {
+            return ProductItem(product: productsProvider.products[index]);
+          },
+          separatorBuilder: (_, __) => Divider(),
+        ),
       ),
       drawer: AppDrawer(),
     );
+  }
+
+  Future<void> _refreshProducts(BuildContext context) {
+    return Provider.of<ProductsProvider>(context, listen: false).loadProducts();
   }
 }
