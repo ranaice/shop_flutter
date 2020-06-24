@@ -197,7 +197,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         if (_formData['id'] == null) {
           await provider.addProduct(newProduct);
         } else {
-          provider.updateProduct(newProduct);
+          await provider.updateProduct(newProduct);
         }
       } catch (error) {
         await showDialog<void>(

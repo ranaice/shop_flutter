@@ -6,7 +6,7 @@ import 'package:shop_flutter/models/product.dart';
 
 class ProductsProvider with ChangeNotifier {
   // .json é uma regra do realtime db do firebase
-  final String _url = 'https://shop-coder.firebaseio.com/products.json';
+  final String _baseUrl = 'https://shop-coder.firebaseio.com/products';
   List<Product> _products = [];
 
   List<Product> get products => [..._products];
@@ -18,7 +18,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> loadProducts() async {
-    final response = await http.get(_url);
+    final response = await http.get('$_baseUrl.json');
     Map<String, dynamic> data = jsonDecode(response.body);
     _products.clear();
     if (data != null) {
@@ -40,7 +40,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future addProduct(Product newProduct) async {
-    final response = await http.post(_url, body: newProduct.toJson());
+    final response = await http.post('$_baseUrl.json', body: newProduct.toJson());
 
     _products.add(
       Product(
@@ -54,7 +54,7 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     if (product == null || product.id == null) {
       return;
     }
@@ -62,6 +62,7 @@ class ProductsProvider with ChangeNotifier {
     final index = _products.indexWhere((prod) => prod.id == product.id);
 
     if (index >= 0) {
+      final response = await http.patch('$_baseUrl/${product.id}.json', body: product.toJson());
       _products[index] = product;
       notifyListeners();
     }
