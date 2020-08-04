@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_flutter/exceptions/http_exception.dart';
 import 'package:shop_flutter/models/product.dart';
 import 'package:shop_flutter/providers/products_provider.dart';
 import 'package:shop_flutter/utils/routes.dart';
@@ -10,6 +11,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaf = Scaffold.of(context);
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(product.imageUrl),
@@ -45,9 +47,14 @@ class ProductItem extends StatelessWidget {
                             }),
                         FlatButton(
                             child: Text('Sim'),
-                            onPressed: () {
-                              Provider.of<ProductsProvider>(context, listen: false).removeProduct(product.id);
-                              Navigator.of(dialogContext).pop(); //Dismiss dialog
+                            onPressed: () async {
+                              try {
+                                await Provider.of<ProductsProvider>(context, listen: false).removeProduct(product.id);
+                              } on HttpException catch (exception) {
+                                scaf.showSnackBar(SnackBar(content: Text(exception.toString())));
+                              } finally {
+                                Navigator.of(dialogContext).pop(); //Dismiss dialog
+                              }
                             }),
                       ],
                     );

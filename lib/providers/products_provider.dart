@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_flutter/exceptions/http_exception.dart';
 import 'package:shop_flutter/models/product.dart';
 
 class ProductsProvider with ChangeNotifier {
@@ -68,9 +69,21 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void removeProduct(String id) {
-    _products.removeWhere((element) => element.id == id);
-    notifyListeners();
+  Future removeProduct(String id) async {
+    final index = _products.indexWhere((prod) => prod.id == id);
+    if (index >= 0) {
+      final product = _products[index];
+      _products.remove(product);
+      notifyListeners();
+
+      final response = await http.delete('$_baseUrl/${product.id}.json');
+
+      if (response.statusCode >= 400) {
+        _products.insert(index, product);
+        notifyListeners();
+        throw HttpException("Ocorreu um erro na exclusão do produto");
+      }
+    }
   }
   // bool _showFavoriteOnly = false;
 
