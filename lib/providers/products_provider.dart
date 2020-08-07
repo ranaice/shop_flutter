@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop_flutter/exceptions/http_exception.dart';
 import 'package:shop_flutter/models/product.dart';
+import 'package:shop_flutter/utils/constants.dart';
 
 class ProductsProvider with ChangeNotifier {
   // .json é uma regra do realtime db do firebase
-  final String _baseUrl = 'https://shop-coder.firebaseio.com/products';
+  final String _baseUrl = '${Constants.BASE_URL}/products';
   List<Product> _products = [];
 
   List<Product> get products => [..._products];

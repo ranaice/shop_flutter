@@ -6,9 +6,10 @@ import 'package:shop_flutter/models/cart_item.dart';
 import 'package:shop_flutter/models/order.dart';
 import 'package:shop_flutter/providers/cart_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_flutter/utils/constants.dart';
 
 class OrdersProvider with ChangeNotifier {
-  final String _baseUrl = 'https://shop-coder.firebaseio.com/orders';
+  final String _baseUrl = '${Constants.BASE_URL}/orders';
   List<Order> _items = [];
 
   List<Order> get items {
